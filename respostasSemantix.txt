@@ -1,0 +1,43 @@
+1 - Qual o objetivo do cache em Spark?
+
+R > No cache você tem a opção de persistir os dados que estão no RDD em memoria, disco ou ambos (quando não tem RAM suficiente, ele faz a paginação para o disco)
+Quando você tem muitas ações que utilizam o mesmo RDD, para que não seja preciso reprocessar o dado, é interessante
+você utilizar a técnica de cache no Spark.
+
+
+2 -	O mesmo código implementado em Spark é normalmente mais rápido que a implementação equivalente em MapReduce. Por quê?
+
+R > Apesar de "por trás dos panos" tudo ser feito com MapReduce em Big Data, no spark, através dos RDDs você tem uma forma
+mais eficiente e rápida de fazer isso, pois todo o processamento é feito in-memory
+
+
+3 - Qual a função do Spark Context?
+
+R> O Spark Context é um objeto que representa o Spark e serve como um client para seu ambiente de execução do Spark.
+É através dele que você consegue criar RDDs, por exemplo. Ele fica entre o cluster manager e o Spark Driver, servindo como conexão entre eles quando você precisa que os dados sejam distribuídos para os Executors, por exemplo.
+
+4 - Explique com suas palavras o que é Resilient Distributed Datasets (RDD)
+
+R>	Os RDDs fazem parte do Core do Spark. Basicamente, fazem uma abstração à uma massa de dados que pode ser qualquer tipo de dado, desde uma lista de String à um Object.
+É através dos RDDs que acontece distribuição dos dados para os Workers Nodes (Executors) em um cluster Spark. 
+Cada RDD é resiliente (a tradução do primeiro R, em RDD). Isso quer dizer que se, por algum motivo o executor onde estiver rodando aquele RDD cair, você consegue refazer esse RDD.
+
+
+
+5 - GroupByKey é menos eficiente que ReduceByKey em grandes dataset. Por quê?
+
+R>	O método GroupByKey do PairRDD faz o Reduce somente na ultima etapa da transformação, e precisa fazer o shuffle de cada worker node para que, no fim, devolva os dados agrupados.
+Com o ReduceByKey, como o Spark já sabe que pode combinar os dados de diferentes Worker Nodes no final da transformação, ele já vai agregando os dados desde o começo.
+Quando você tem um dataset muito grande, fazer GroupByKey nele pode facilmente "estourar" a memória da aplicação.
+
+
+6 -	Explique o que o seguinte código Scala faz.
+
+R>	É um exemplo de WordCount simples. 
+Primeiro, ele cria um RDD através de um Spark Context, pelo metodo textFile(), que lê um arquivo de dentro do HDFS. 
+Em seguida, usa a função flatMap(), que recebe como argumento uma entrada e produz N saidas. 
+
+Nesse caso, a entrada é cada linha do arquivo carregado e a saida é cada palavra/letra no texto onde o separador é um espaço em branco.
+Seguindo, cria um dataset chave - valor, onde a chave é a palavra e o valor é 1, chamando o método de reduceByKey para somar cada ocorrencia da chave determinada.
+
+Por fim, salva o output para dentro do HDFS.
